@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify, flash
 from app.dao.referencial.ciudad.CiudadDao import CiudadDao
 
 ciumod = Blueprint('ciudad', __name__, template_folder='templates')
@@ -30,8 +30,10 @@ def save_ciudad():
     if txtciudad != None and len(txtciudad.strip()) > 0:
         isSaved = cdao.insertCiudad(txtciudad.strip().upper())
     if isSaved:
+        flash("Exito, se guardó correctamente", "success")
         return redirect(url_for('ciudad.index_ciudad'))
     else:
+        flash("No se pudo guardar, consulte al administrador", "warning")
         return redirect(url_for('ciudad.agregar_ciudad'))
 
 @ciumod.route('/editar-ciudad/<id>')
@@ -61,7 +63,11 @@ def update_ciudad():
 @ciumod.route('/delete-ciudad/<id>')
 def delete_ciudad(id):
     cdao = CiudadDao()
-    cdao.deleteCiudad(id)
+    isDeleted = cdao.deleteCiudad(id)
+    if isDeleted:
+        flash("Exito, se eliminó correctamente", "success")
+    else:
+        flash("Error, consulte al administrador", "warning")
     return redirect(url_for('ciudad.index_ciudad'))
 
 # REST
