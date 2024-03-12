@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% from 'macros.html' import pintar_alerta %}
 
+{% block titulo_pagina %}Proveedores{% endblock %}
+
 {% block dinamico %}
 
   <div class="card">
@@ -12,13 +14,13 @@
                 <label for="txtruc" class="visually-hidden">RUC</label>
             </div>
             <div class="col col-md-3">
-              <input type="text" class="form-control" id="txtruc">
+              <input type="text" class="form-control" name="txtruc">
             </div>
             <div class="col col-md-1">
                 <label for="inputPassword2" class="visually-hidden">ID</label>
             </div>
             <div class="col col-md-1">
-              <input type="text" class="form-control" id="txtid">
+              <input type="text" class="form-control" name="txtid">
             </div>
         </div>
         <!--  -->
@@ -28,13 +30,13 @@
                <label for="txtruc" class="visually-hidden">Nombre o Razón Social</label>
            </div>
            <div class="col col-md-3">
-             <input type="text" class="form-control" id="txtrazon">
+             <input type="text" class="form-control" name="txtrazon">
            </div>
            <div class="col col-md-1">
                <label for="inputPassword2" class="visually-hidden">Dirección</label>
            </div>
            <div class="col col-md-4">
-             <input type="text" class="form-control" id="txtdirección">
+             <input type="text" class="form-control" name="txtdirección">
            </div>
         </div>
         <!--  -->
@@ -44,13 +46,13 @@
                 <label for="txtapellido" class="visually-hidden">Apellido</label>
             </div>
             <div class="col col-md-3">
-              <input type="text" class="form-control" id="txtapellido">
+              <input type="text" class="form-control" na,e="txtapellido">
             </div>
             <div class="col col-md-1">
                 <label for="txtemail" class="visually-hidden">Email</label>
             </div>
             <div class="col col-md-3">
-              <input type="text" class="form-control" id="txtemail">
+              <input type="text" class="form-control" name="txtemail">
             </div>
          </div>
          <!--  -->
@@ -60,7 +62,7 @@
                 <label for="txttelefono" class="visually-hidden">Teléfono</label>
             </div>
             <div class="col col-md-3">
-              <input type="text" class="form-control" id="txttelefono">
+              <input type="text" class="form-control" name="txttelefono">
             </div>
         </div>
         <!--  -->
@@ -70,10 +72,17 @@
                 <label for="txtidpais" class="visually-hidden">País</label>
             </div>
             <div class="col col-md-1">
-              <input type="text" class="form-control" id="txtidpais">
+              <input type="text" class="form-control" name="txtidpais">
             </div>
             <div class="col col-md-3">
-              <input type="text" class="form-control" id="txtdescripcionpais">
+              <select class="form-control" name="selpais">
+                <option selected>...</option>
+                {% if lista_paises|length > 0 %}
+                  {% for pais in lista_paises %}
+                    <option value="{{ pais['id'] }}">{{ pais['descripcion'] }}</option>
+                  {% endfor %}
+                {% endif %}
+              </select>
             </div>
         </div>
         <!--  -->
@@ -83,10 +92,10 @@
                 <label for="txtidciudad" class="visually-hidden">Ciudad</label>
             </div>
             <div class="col col-md-1">
-              <input type="text" class="form-control" id="txtidciudad">
+              <input type="text" class="form-control" name="txtidciudad">
             </div>
-            <div class="col col-md-3">
-              <input type="text" class="form-control" id="txtdescripcionciudad">
+            <div class="col col-md-3">              
+              <input type="text" class="form-control" name="txtdescripcionciudad">
             </div>
         </div>
         <!--  -->
@@ -97,4 +106,12 @@
   </div>
 
 {{ pintar_alerta(messages) }}
+{% endblock %}
+
+{% block mi_javascript %}
+<script>
+  $(function(){
+    $('select[name="selpais"]').select2();
+  });
+</script>
 {% endblock %}
