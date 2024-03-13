@@ -76,7 +76,7 @@
             </div>
             <div class="col col-md-3">
               <select class="form-control" name="selpais">
-                <option selected>...</option>
+                <option value="" selected>...</option>
                 {% if lista_paises|length > 0 %}
                   {% for pais in lista_paises %}
                     <option value="{{ pais['id'] }}">{{ pais['descripcion'] }}</option>
@@ -95,7 +95,7 @@
               <input type="text" class="form-control" name="txtidciudad">
             </div>
             <div class="col col-md-3">              
-              <input type="text" class="form-control" name="txtdescripcionciudad">
+              <select class="form-control" name="selciudad"></select>
             </div>
         </div>
         <!--  -->
@@ -110,10 +110,30 @@
 
 {% block mi_javascript %}
 <script>
-  $(function(){
-    $('select[name="selpais"]').select2({
+  const getCiudadesByPaisUrl = (id) => `/referencial/ciudad/get-ciudad-by-idpais/${id}`;
+  const addEvents = () => {
+    $('select[name="selpais"], select[name="selciudad"]').select2({
+      placeholder: "...",
       theme: 'bootstrap-5'
     });
+    $('select[name="selpais"').on('change', function(e) {
+      const idpais = $(this).val();
+      if(idpais) {
+        $('select[name="selciudad"]').empty();
+        $('select[name="selciudad"]').select2({
+          placeholder: "...",
+          theme: 'bootstrap-5',
+          ajax: {
+            url: getCiudadesByPaisUrl(idpais),
+            dataType: 'json'
+          }
+        });
+      }
+    });
+  }
+  //main function
+  $(function(){
+    addEvents();
   });
 </script>
 {% endblock %}
