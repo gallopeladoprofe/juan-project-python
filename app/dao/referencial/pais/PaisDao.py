@@ -2,11 +2,11 @@ from app.conexion.Conexion import Conexion
 
 class PaisDao:
     
-    def getPaises(self):
+    def getPaisesConCiudades(self):
         
         querySQL = """
-            SELECT id, descripcion
-            FROM paises
+            SELECT id, descripcion FROM paises p 
+            WHERE EXISTS(SELECT 1 FROM ciudades c WHERE c.id_pais = p.id)
         """
         conexion = Conexion()
         con = conexion.getConexion()
