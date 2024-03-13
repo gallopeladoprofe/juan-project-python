@@ -87,3 +87,9 @@ def getCiudad():
         return jsonify(diccionario)
     else:
         return 'no hay ciudades'
+
+@ciumod.route('/get-ciudad-by-idpais/<id>')
+def get_ciudad_by_idpais(id):
+    cdao = CiudadDao()
+    lista = cdao.getCiudadesByIdpais(id)
+    return jsonify(lista), 200 if lista else 404
