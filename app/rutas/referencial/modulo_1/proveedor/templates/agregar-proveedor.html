@@ -106,24 +106,21 @@
 
 {% block mi_javascript %}
 <script>
+  const extra_settings_select2 = {
+    placeholder: "...",
+    theme: 'bootstrap-5'
+  }
   const getCiudadesByPaisUrl = (id) => `/referencial/ciudad/get-ciudad-by-idpais/${id}`;
   
   const addEvents = () => {
-    $('select[name="selpais"], select[name="selciudad"]').select2({
-      placeholder: "...",
-      theme: 'bootstrap-5'
-    });
+    $('select[name="selpais"], select[name="selciudad"]').select2(extra_settings_select2);
     $('select[name="selpais"').on('change', function(e) {
       const idpais = $(this).val();
       if(idpais) {
-        $('select[name="selciudad"]').empty();
-        $('select[name="selciudad"]').select2({
-          placeholder: "...",
-          theme: 'bootstrap-5',
-          ajax: {
-            url: getCiudadesByPaisUrl(idpais),
-            dataType: 'json'
-          }
+        fetch(getCiudadesByPaisUrl(idpais)).then(resp => resp.json()).then(paises => {
+          extra_settings_select2.data = paises;
+          $('select[name="selciudad"]').empty();
+          $('select[name="selciudad"]').select2(extra_settings_select2);
         });
       }
     });
