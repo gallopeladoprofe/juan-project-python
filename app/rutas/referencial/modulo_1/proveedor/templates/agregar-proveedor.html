@@ -4,23 +4,23 @@
 {% block titulo_pagina %}Proveedores{% endblock %}
 
 {% block dinamico %}
-
+<form action="" method="post" id="frm">
   <div class="card">
     <div class="card-header">Proveedores</div>
     <div class="card-body">
-        <!-- RUC y ID -->
+        <!-- RUC y Identificador del RUC -->
         <div class="row g-3">
             <div class="col col-md-1">
                 <label for="txtruc" class="visually-hidden">RUC</label>
             </div>
             <div class="col col-md-3">
-              <input type="text" class="form-control" name="txtruc">
+              <input type="text" class="form-control" name="txtruc" id="txtruc" required>
             </div>
             <div class="col col-md-1">
-                <label for="inputPassword2" class="visually-hidden">ID</label>
+                <label for="inputPassword2" class="visually-hidden">Identificador del RUC</label>
             </div>
             <div class="col col-md-1">
-              <input type="text" class="form-control" name="txtid">
+              <input type="text" class="form-control" name="txtid" id="txtid" autocomplete="off" required>
             </div>
         </div>
         <!--  -->
@@ -30,13 +30,13 @@
                <label for="txtruc" class="visually-hidden">Nombre o Razón Social</label>
            </div>
            <div class="col col-md-3">
-             <input type="text" class="form-control" name="txtrazon">
+             <input type="text" class="form-control" name="txtrazon" id="txtrazon">
            </div>
            <div class="col col-md-1">
                <label for="inputPassword2" class="visually-hidden">Dirección</label>
            </div>
            <div class="col col-md-4">
-             <input type="text" class="form-control" name="txtdirección">
+             <input type="text" class="form-control" name="txtdirección" id="txtdirección" autocomplete="off" required>
            </div>
         </div>
         <!--  -->
@@ -46,13 +46,13 @@
                 <label for="txtapellido" class="visually-hidden">Apellido</label>
             </div>
             <div class="col col-md-3">
-              <input type="text" class="form-control" na,e="txtapellido">
+              <input type="text" class="form-control" name="txtapellido" id="txtapellido" autocomplete="off" required>
             </div>
             <div class="col col-md-1">
                 <label for="txtemail" class="visually-hidden">Email</label>
             </div>
             <div class="col col-md-3">
-              <input type="text" class="form-control" name="txtemail">
+              <input type="text" class="form-control" name="txtemail" id="txtemail" autocomplete="off" required>
             </div>
          </div>
          <!--  -->
@@ -62,7 +62,7 @@
                 <label for="txttelefono" class="visually-hidden">Teléfono</label>
             </div>
             <div class="col col-md-3">
-              <input type="text" class="form-control" name="txttelefono">
+              <input type="text" class="form-control" name="txttelefono" id="txttelefono" autocomplete="off" required>
             </div>
         </div>
         <!--  -->
@@ -70,9 +70,6 @@
         <div class="row g-3 pt-4">
             <div class="col col-md-1">
                 <label for="txtidpais" class="visually-hidden">País</label>
-            </div>
-            <div class="col col-md-1">
-              <input type="text" class="form-control" name="txtidpais">
             </div>
             <div class="col col-md-3">
               <select class="form-control" name="selpais">
@@ -91,9 +88,6 @@
             <div class="col col-md-1">
                 <label for="txtidciudad" class="visually-hidden">Ciudad</label>
             </div>
-            <div class="col col-md-1">
-              <input type="text" class="form-control" name="txtidciudad">
-            </div>
             <div class="col col-md-3">              
               <select class="form-control" name="selciudad"></select>
             </div>
@@ -101,9 +95,11 @@
         <!--  -->
     </div>
     <div class="card-footer">
-      <button type="submit" class="btn btn-primary">Guardar</button>
+      <button type="submit" class="btn btn-primary" id="btnguardar">Guardar</button>
+      <button type="button" class="btn btn-info" id="btnlimpiar">Limpiar formulario</button>
     </div>
   </div>
+</form>
 
 {{ pintar_alerta(messages) }}
 {% endblock %}
@@ -111,6 +107,7 @@
 {% block mi_javascript %}
 <script>
   const getCiudadesByPaisUrl = (id) => `/referencial/ciudad/get-ciudad-by-idpais/${id}`;
+  
   const addEvents = () => {
     $('select[name="selpais"], select[name="selciudad"]').select2({
       placeholder: "...",
@@ -130,7 +127,61 @@
         });
       }
     });
+    $('#frm').on('submit', function(e){
+      if(!validarFormulario()) {
+        e.preventDefault();
+      }
+    });
   }
+  
+  const validarFormulario = () => {
+    const ruc = $('#txtruc').val();
+    const identificador_ruc = $('#txtid').val();
+    const razon = $('#txtrazon').val();
+    const dirección = $('#txtdirección').val();
+    const apellido = $('#txtapellido').val();
+    const email = $('#txtemail').val();
+    const telefono = $('#txttelefono').val();
+    const idpais = $('select[name=selpais]').val();
+    const idciudad = $('select[name=selciudad]').val();
+
+    let arrayMensajes = [];
+    if(!ruc) {
+      arrayMensajes.push("El ruc no debe estar vacio");
+    }
+    if(!identificador_ruc) {
+      arrayMensajes.push("El identificador_ruc no debe estar vacio");
+    }
+    if(!razon) {
+      arrayMensajes.push("El razon no debe estar vacio");
+    }
+    if(!dirección) {
+      arrayMensajes.push("El dirección no debe estar vacio");
+    }
+    if(!apellido) {
+      arrayMensajes.push("El apellido no debe estar vacio");
+    }
+    if(!email) {
+      arrayMensajes.push("El email no debe estar vacio");
+    }
+    if(!telefono) {
+      arrayMensajes.push("El telefono no debe estar vacio");
+    }
+    if(!idpais) {
+      arrayMensajes.push("El pais no debe estar vacio");
+    }
+    if(!idciudad) {
+      arrayMensajes.push("La ciudad no debe estar vacio");
+    }
+
+    if(arrayMensajes.length > 0) {
+      alert(arrayMensajes.join());
+      return false;
+    }
+    return true;
+
+  }
+
   //main function
   $(function(){
     addEvents();
