@@ -18,19 +18,6 @@ def agregar_proveedor():
 
 @proveedormod.route('/save-proveedor', methods=['POST'])
 def save_proveedor():
-    """
-    {
-    "selciudad": "9",
-    "selpais": "1",
-    "txtapellido": "era santo",
-    "txtdirección": "las palmeras",
-    "txtemail": "caye@mail.com",
-    "txtid": "2",
-    "txtrazon": "san cayetano",
-    "txtruc": "222",
-    "txttelefono": "123"
-    }
-    """
     ruc = request.form['txtruc']
     identificador_ruc = request.form['txtid']
     razon = request.form['txtrazon']
