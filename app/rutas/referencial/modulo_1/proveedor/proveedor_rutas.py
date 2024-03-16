@@ -40,3 +40,21 @@ def save_proveedor():
     else:
         flash('Error al guardar, consultar al administrador', 'warning')
         return redirect(url_for('proveedormod.agregar_proveedor'))
+
+# Operaciones REST
+@proveedormod.route('/v1/get-proveedores')
+def get_proveedores():
+    return jsonify({ 'data': provdao.getProveedores() })
+
+@proveedormod.route('/v1/delete-proveedor', methods=['DELETE'])
+def delete_proveedor():
+    id_proveedor = request.json.get('id')
+    if id_proveedor:
+        isDeleted = provdao.deleteProveedor(id_proveedor)
+    else:
+        return { 'success': None, 'error': 'Parámetro no válido' },400
+
+    if isDeleted:
+        return { 'success': 'Borrado exitoso', 'error': None },200
+    else:
+        return { 'success': None, 'error': 'No se pudo eliminar, consulte al administrador' },500
