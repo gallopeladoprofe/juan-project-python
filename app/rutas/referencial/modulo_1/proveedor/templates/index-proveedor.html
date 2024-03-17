@@ -72,7 +72,12 @@
                             tabla.row(fila).remove().draw();
                             alert(data.success);
                             console.log(data)
+                        } else {
+                            alert(data.error);
                         }
+                    })
+                    .catch(err => {
+                        alert(err);
                     });
 
             }
