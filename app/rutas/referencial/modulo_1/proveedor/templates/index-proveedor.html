@@ -44,7 +44,7 @@
                 { data: 'telefono' },
                 { data: 'nombre_ciudad' },
                 { data: function(row) {
-                    return `<a name="btn_editar" href="/referencial/proveedor/editar-proveedor/${row.id}" class="btn btn-primary">Editar</a>
+                    return `<button type="button" data-id="${row.id}" name="btn_editar" class="btn btn-primary">Editar</button>
                             <button type="button" data-id="${row.id}" name="btn_eliminar" class="btn btn-warning">Eliminar</button>`
                 }}
             ]
@@ -82,6 +82,12 @@
 
             }
 
+        });
+        $('#tbl').on('click', 'button[name="btn_editar"]',function(){
+            if(confirm('¿Desea editar?')) {
+                const id = $(this).data('id');
+                location.href = `/referencial/proveedor/editar-proveedor/${id}`;
+            }
         });
     }
 

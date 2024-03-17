@@ -96,7 +96,7 @@
     </div>
     <div class="card-footer">
       <button type="submit" class="btn btn-primary" id="btnguardar">Guardar</button>
-      <button type="reset" class="btn btn-info" id="btnlimpiar">Limpiar formulario</button>
+      <button type="button" class="btn btn-info" id="btnlimpiar">Limpiar formulario</button>
     </div>
   </div>
 </form>
@@ -128,6 +128,10 @@
       if(!validarFormulario()) {
         e.preventDefault();
       }
+    });
+    $('#btnlimpiar').on('click', function() {
+      $('.card-body').find('input[type=text]').val('');
+      $('select[name=selciudad], select[name=selpais]').val('').trigger('change');
     });
   }
   
