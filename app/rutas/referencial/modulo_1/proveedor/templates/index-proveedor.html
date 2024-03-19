@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% from 'macros.html' import pintar_alerta %}
+
+{% block dinamico %}
+<div class="card">
+  <div class="card-header">
+    <a href="{{ url_for('proveedormod.agregar_proveedor') }}" class="btn btn-primary">Agregar proveedor</a>
+  </div>
+  <div class="card-body">
+    <table class="table" id="tbl">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">RUC</th>
+            <th scope="col">Razón_social</th>
+            <th scope="col">Email</th>
+            <th scope="col">Telefono</th>
+            <th scope="col">Ciudad</th>
+            <th scope="col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        </table>
+		{{ pintar_alerta(messages) }}
+      </div>
+    </div>
+{% endblock %}
+
+{% block mi_javascript %}
+<script>
+
+    const initDatatable = () => {
+        $('#tbl').DataTable({
+            ajax: '/referencial/proveedor/v1/get-proveedores',
+            columns: [
+                { data: 'id' },
+                { data: function(row) {
+                    return `${row.ruc}-${row.ruc_nro_identificador}`
+                }},
+                { data: function(row) {
+                    return `${row.razon_social} ${row.apellidos}`
+                }},
+                { data: 'email' },
+                { data: 'telefono' },
+                { data: 'nombre_ciudad' },
+                { data: function(row) {
+                    return `<button type="button" data-id="${row.id}" name="btn_editar" class="btn btn-primary">Editar</button>
+                            <button type="button" data-id="${row.id}" name="btn_eliminar" class="btn btn-warning">Eliminar</button>`
+                }}
+            ]
+        });
+    }
+
+    const addEvents = () => {
+        $('#tbl').on('click', 'button[name="btn_eliminar"]',function(){
+
+            if(confirm('¿Desea eliminar?')) {
+                const id = $(this).data('id');
+                fetch('/referencial/proveedor/v1/delete-proveedor', {
+                        method: 'DELETE'
+                        , headers: {
+                            'Content-Type': 'application/json'
+                        }
+                        , body: JSON.stringify({ id:id })
+                    })
+                    .then(resp => resp.json())
+                    .then(data => {
+                        if(data && !data.error && data.success) {
+                            // Para borrar la fila del datatable(cliente)
+                            const fila =$(this).closest('tr');
+                            const tabla = $('#tbl').DataTable();
+                            tabla.row(fila).remove().draw();
+                            alert(data.success);
+                            console.log(data)
+                        } else {
+                            alert(data.error);
+                        }
+                    })
+                    .catch(err => {
+                        alert(err);
+                    });
+
+            }
+
+        });
+        $('#tbl').on('click', 'button[name="btn_editar"]',function(){
+            if(confirm('¿Desea editar?')) {
+                const id = $(this).data('id');
+                location.href = `/referencial/proveedor/editar-proveedor/${id}`;
+            }
+        });
+    }
+
+    //función main
+    $(function(){
+        initDatatable();
+        addEvents();
+    });
+</script>
+{% endblock %}
