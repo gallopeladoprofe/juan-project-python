@@ -13,23 +13,27 @@
 
         <!-- nro., fecha ,estado solicitud -->
         <div class="row g-3">
-            <div class="col col-md-1">
-                <label for="txtruc" class="visually-hidden">Nro. Solicitud</label>
-            </div>
-            <div class="col col-md-2">
-              <input type="text" class="form-control" id="txtruc" value="" required="">
+            <div class="col col-md-3">
+                <label for="txtruc">Nro. Solicitud</label>
             </div>
             <div class="col col-md-1">
-                <label for="inputPassword2" class="visually-hidden">Estado solicitud</label>
+                <label for="inputPassword2">Estado solicitud</label>
             </div>
             <div class="col col-md-3">
-              <input type="text" class="form-control" id="txtid" value="" autocomplete="off" required="">
+              <select class="form-control" name="selestado">
+                <option value="" selected>...</option>
+                {% if estados|length > 0 %}
+                  {% for estado in estados %}
+                      <option value="{{ estado['id'] }}">{{ estado['descripcion'] }}</option>
+                  {% endfor %}
+                {% endif %}
+              </select>
             </div>
             <div class="col col-md-1">
-                <label for="inputPassword2" class="visually-hidden">Fecha solicitud</label>
+                <label for="txtfechasolicitud" class="visually-hidden">Fecha solicitud</label>
             </div>
             <div class="col col-md-3">
-              <input type="text" class="form-control" id="txtid" value="" autocomplete="off" required="">
+              <input type="date" class="form-control" id="txtfechasolicitud" value="" autocomplete="off" required="">
             </div>
         </div>
         <!--  -->
@@ -42,47 +46,43 @@
                     <div class="card-body">
 
                         <!-- cod. funcionario, cedula, cargo -->
-                        <div class="row g-3">
-                            <div class="col col-md-1">
-                                <label for="txtruc" class="visually-hidden">Cod. Funcionario</label>
+                        <div class="row g-3 align-items-center">
+                            <div class="col"></div>
+                            <div class="col col-md-6 mb-4">
+                              <select class="form-control" name="selfuncionario">
+                                <option value="" selected>Buscar funcionario</option>
+                                {% if lista_funcionarios|length > 0 %}
+                                  {% for item in lista_funcionarios %}
+                                      <option value="{{ item['id'] }}">{{ item['ci'] }} - {{ item['nombres'] }} {{ item['apellidos'] }}</option>
+                                  {% endfor %}
+                                {% endif %}
+                              </select>
                             </div>
-                            <div class="col col-md-2">
-                              <input type="text" class="form-control" id="txtruc" value="" required="">
-                            </div>
-                            <div class="col col-md-1">
-                                <label for="inputPassword2" class="visually-hidden">Cédula</label>
-                            </div>
-                            <div class="col col-md-3">
-                              <input type="text" class="form-control" id="txtid" value="" autocomplete="off" required="">
-                            </div>
-                            <div class="col col-md-1">
-                                <label for="inputPassword2" class="visually-hidden">Cargo</label>
-                            </div>
-                            <div class="col col-md-3">
-                              <input type="text" class="form-control" id="txtid" value="" autocomplete="off" required="">
-                            </div>
+                            <div class="col"></div>
                         </div>
                         <!--  -->
 
                         <!-- nombres, apellidos, departamento -->
                         <div class="row g-3">
-                            <div class="col col-md-1">
-                                <label for="txtruc" class="visually-hidden">Nombres</label>
-                            </div>
-                            <div class="col col-md-2">
-                              <input type="text" class="form-control" id="txtruc" value="" required="">
-                            </div>
-                            <div class="col col-md-1">
-                                <label for="inputPassword2" class="visually-hidden">Apellidos</label>
-                            </div>
-                            <div class="col col-md-3">
-                              <input type="text" class="form-control" id="txtid" value="" autocomplete="off" required="">
-                            </div>
-                            <div class="col col-md-1">
-                                <label for="inputPassword2" class="visually-hidden">Departamento</label>
-                            </div>
-                            <div class="col col-md-3">
-                              <input type="text" class="form-control" id="txtid" value="" autocomplete="off" required="">
+                            <div class="col col-md-12">
+                              <table class="table table-striped table-hover" id="tblfuncionario">
+                                  <tr>
+                                    <th scope="row" class="table-dark text-center">Cedula</th>
+                                    <th scope="row" class="text-center" colspan="2" id="tdcedula"></th>
+                                  </tr>
+                                  <tr>
+                                    <th scope="row" class="table-dark text-center">Nombres y Apellidos</th>
+                                    <td colspan="2" class="text-center" id="tdnombres"></td>
+                                  </tr>
+                                  <tr>
+                                    <th scope="row" class="table-dark text-center">Cargo</th>
+                                    <td colspan="2" class="text-center" id="tdcargo"></td>
+                                  </tr>
+                                  <tr>
+                                    <th scope="row" class="table-dark text-center">Departamento</th>
+                                    <td colspan="2" class="text-center" id="tddepartamento"></td>
+                                  </tr>
+                              </table>
                             </div>
                         </div>
                         <!--  -->
@@ -186,4 +186,32 @@
 </div>
 
 {{ pintar_alerta(messages) }}
+{% endblock %}
+
+{% block mi_javascript %}
+<script>
+  const extra_settings_select2 = {
+    placeholder: "Buscar funcionario",
+    theme: 'bootstrap-5'
+  }
+  $(function(){
+    $('select[name="selestado"], select[name="selfuncionario"]').select2(extra_settings_select2);
+    $('select[name="selfuncionario"]').on('change', function(){
+      if(!$(this).val()) {
+        $('#tblfuncionario').find('td').text('');
+        return;
+      }
+      fetch(`/gestionar-compras/registrar-solicitud-compras/v1/get-funcionario-by-id/${$(this).val()}`)
+        .then(resp => resp.json())
+        .then(funcionario => {
+          $('#tdcedula').text(funcionario.ci);
+          $('#tdnombres').text(`${funcionario.nombres} ${funcionario.apellidos}`);
+          $('#tdcargo').text(funcionario.cargo);
+          $('#tddepartamento').text(funcionario.departamento);
+        })
+        .catch(err => console.error(err));
+
+    });
+  });
+</script>
 {% endblock %}
