@@ -13,13 +13,13 @@
 
         <!-- nro., fecha ,estado solicitud -->
         <div class="row g-3">
-            <div class="col col-md-3">
-                <label for="txtruc">Nro. Solicitud</label>
+            <div id="lblnrosolicitud" class="col col-xs-12 col-md-3 col-lg-3 col-xl-3" hidden>
+                <label>Nro. Solicitud</label>
             </div>
-            <div class="col col-md-1">
-                <label for="inputPassword2">Estado solicitud</label>
+            <div class="col col-xs-12 col-md-1 col-lg-1 col-xl-1">
+                <label>Estado solicitud</label>
             </div>
-            <div class="col col-md-3">
+            <div class="col col-xs-12 col-md-3 col-lg-3 col-xl-3">
               <select class="form-control" name="selestado">
                 <option value="" selected>...</option>
                 {% if estados|length > 0 %}
@@ -30,7 +30,7 @@
               </select>
             </div>
             <div class="col col-md-1">
-                <label for="txtfechasolicitud" class="visually-hidden">Fecha solicitud</label>
+                <label for="txtfechasolicitud">Fecha solicitud</label>
             </div>
             <div class="col col-md-3">
               <input type="date" class="form-control" id="txtfechasolicitud" value="" autocomplete="off" required="">
@@ -50,7 +50,7 @@
                             <div class="col"></div>
                             <div class="col col-md-6 mb-4">
                               <select class="form-control" name="selfuncionario">
-                                <option value="" selected>Buscar funcionario</option>
+                                <option value="" selected></option>
                                 {% if lista_funcionarios|length > 0 %}
                                   {% for item in lista_funcionarios %}
                                       <option value="{{ item['id'] }}">{{ item['ci'] }} - {{ item['nombres'] }} {{ item['apellidos'] }}</option>
@@ -95,7 +95,7 @@
 
         <!-- Solicitud - info y buscar insumos -->
         <div class="row mt-4">
-            <div class="col col-md-6">
+            <div class="col col-md-8">
                 <div class="card">
                     <div class="card-header">Solicitud - info</div>
                     <div class="card-body">
@@ -103,16 +103,23 @@
                         <!-- prioridad y fecha de entrega -->
                         <div class="row g-3">
                             <div class="col col-md-2">
-                                <label for="txtruc" class="visually-hidden">Prioridad</label>
+                                <label for="txtruc">Prioridad</label>
                             </div>
                             <div class="col col-md-4">
-                              <input type="text" class="form-control" id="txtruc" value="" required="">
+                              <select class="form-control" name="selprioridad">
+                                <option value="" selected></option>
+                                {% if lista_prioridades|length > 0 %}
+                                  {% for item in lista_prioridades %}
+                                      <option value="{{ item['id'] }}">{{ item['descripcion'] }}</option>
+                                  {% endfor %}
+                                {% endif %}
+                              </select>
                             </div>
                             <div class="col col-md-3">
-                                <label for="inputPassword2" class="visually-hidden">Fecha de entrega</label>
+                                <label for="txtfechaentrega">Fecha de entrega</label>
                             </div>
                             <div class="col col-md-3">
-                              <input type="text" class="form-control" id="txtid" value="" autocomplete="off" required="">
+                              <input type="date" class="form-control" id="txtfechaentrega" autocomplete="off">
                             </div>
                         </div>
                         <!--  -->
@@ -130,12 +137,19 @@
                     <div class="card-header">
                         <div class="row g-3">
                             <h5>Información insumos</h5>
-                            <div class="col col-md-offset-5"></div>
+                            <div class="col col-md-offset-1"></div>
                             <div class="col col-md-1">
-                                <label for="txtruc" class="visually-hidden">Agregar</label>
+                                <label for="txtruc">Agregar</label>
                             </div>
-                            <div class="col col-md-4">
-                              <input type="text" class="form-control" id="txtruc" value="" required="">
+                            <div class="col col-md-7">
+                              <select class="form-control" name="selinsumo">
+                                <option value="" selected></option>
+                                {% if lista_insumos|length > 0 %}
+                                  {% for item in lista_insumos %}
+                                      <option value="{{ item['id'] }}">{{ item['id'] }} | {{ item['descripcion'] }} | {{ item['costo'] }} | {{ item['marca'] }} | {{ item['tipo_insumo'] }} | {{ item['unidad_medida'] }}</option>
+                                  {% endfor %}
+                                {% endif %}
+                              </select>
                             </div>
                         </div>
                     </div>
@@ -190,12 +204,18 @@
 
 {% block mi_javascript %}
 <script>
+
+  // proviene del servidor
+  const data_from_server = {
+    insumos: []
+  }
+
   const extra_settings_select2 = {
-    placeholder: "Buscar funcionario",
+    placeholder: "Buscar item",
     theme: 'bootstrap-5'
   }
   $(function(){
-    $('select[name="selestado"], select[name="selfuncionario"]').select2(extra_settings_select2);
+    $('select[name="selestado"], select[name="selfuncionario"], select[name="selprioridad"], select[name="selinsumo"]').select2(extra_settings_select2);
     $('select[name="selfuncionario"]').on('change', function(){
       if(!$(this).val()) {
         $('#tblfuncionario').find('td').text('');
