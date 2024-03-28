@@ -165,7 +165,8 @@
 
   // proviene del servidor
   const data_from_server = {
-    insumos: {{ lista_insumos|tojson }}
+    url_nueva_solicitud : '{{ url_for("rscmod.registrar_solicitud_compra") }}'
+    , insumos: {{ lista_insumos|tojson }}
   }
 
   const extra_settings_select2 = {
@@ -292,6 +293,31 @@
         ,fecha_entrega: fecha_entrega
         , detalle_insumo: detalle_insumo
       });
+
+      fetch(data_from_server.url_nueva_solicitud, {
+        method: 'POST'
+        , headers: {
+          'Content-Type': 'application/json'
+        }
+        , body: JSON.stringify({
+                  id_estado: id_estado
+                  ,id_funcionario: id_funcionario
+                  ,id_prioridad: id_prioridad
+                  ,fecha_entrega: fecha_entrega
+                  , detalle_insumo: detalle_insumo
+                })
+      })
+      .then(resp => resp.json())
+      .then(data => {
+        if(data && !data.error && data.success) {
+          alert(data.success);
+          //location.replace(''):
+        } else {
+          alert(data.error);
+        }
+      })
+      .catch(err => alert(err));
+
     });
 
   });
